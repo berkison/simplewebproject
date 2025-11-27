@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Simple.Data;
 using Microsoft.AspNetCore.Identity;
+using Simple.Services;
+
+
 
 
 
@@ -32,6 +35,7 @@ builder.Services.AddCors(options =>
 });
 
 
+builder.Services.AddScoped<IKitapService, KitapService>();
 
 builder.Services.AddAuthorization();
 
@@ -48,7 +52,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 // ALTINA BUNU EKLE:
-app.UseCors("HerkesGelsin");
+app.UseCors("HerkesGelsin"); //HERKESE AÇIK
 // ...
 app.UseAuthorization();
 

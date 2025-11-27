@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Simple.Data;
 using Simple.Models;
+using Simple.Services; // Service klasörünü ekle
 
 namespace Simple.Controllers
 {
@@ -8,63 +8,46 @@ namespace Simple.Controllers
     [ApiController]
     public class KitaplarController : ControllerBase
     {
-        private readonly SimpleContext _context;
+        // ARTIK CONTEXT YOK, SERVICE VAR
+        private readonly IKitapService _service;
 
-        public KitaplarController(SimpleContext context)
+        public KitaplarController(IKitapService service)
         {
-            _context = context;
+            _service = service;
+        }
+
+        [HttpGet]
+        public IActionResult KitaplariGetir()
+        {
+            var kitaplar = _service.TumKitaplariGetir();
+            return Ok(kitaplar);
         }
 
         [HttpPost]
         public IActionResult KitapEkle(Kitaplar yeniKitap)
         {
-            _context.kitaplar.Add(yeniKitap);
-            _context.SaveChanges();
-            return Ok("Kitap başarıyla kaydedildi!");
+            _service.KitapEkle(yeniKitap);
+            return Ok("Kitap başarıyla eklendi.");
         }
 
-        [HttpGet]
-        public IActionResult KitaplariGetir() {
+        [HttpPut("{id}")]
+        public IActionResult KitapGuncelle(int id, Kitaplar guncelKitap)
+        {
+            // Kontrolü servise bırakabilirsin veya burada yapabilirsin
+            var kitap = _service.IdIleGetir(id);
+            if (kitap == null) return NotFound("Kitap bulunamadı");
 
-            var kitaplar = _context.kitaplar.ToList();
-
-            return Ok(kitaplar);
+            _service.KitapGuncelle(id, guncelKitap);
+            return Ok("Kitap güncellendi.");
         }
 
         [HttpDelete("{id}")]
-
-        public IActionResult KitaplariDelete(int id)
+        public IActionResult KitapSil(int id)
         {
-            var silinecekKitap = _context.kitaplar.Find(id);
+            var sonuc = _service.KitapSil(id);
+            if (!sonuc) return NotFound("Silinecek kitap yok.");
 
-            if(silinecekKitap == null)
-            {
-                return NotFound("Böyle Bir Kitap Zaten YOK");
-            }
-            _context.kitaplar.Remove(silinecekKitap);
-            _context.SaveChanges();
-            return Ok("KİTAP SİLİNMESİ DÖNDÜ");
-
+            return Ok("Kitap silindi.");
         }
-        [HttpPut("{id}")]
-
-        public IActionResult KitaplariGuncelle(int id, Kitaplar guncelKitap)
-        {
-            var guncellenecekKitap = _context.kitaplar.Find(id);
-            if(guncellenecekKitap == null)
-            {
-                return NotFound("Güncellemek istediğiiz kitap bulunamadı");
-
-            }
-            guncellenecekKitap.Ad = guncelKitap.Ad;
-            guncellenecekKitap.SayfaSayisi = guncelKitap.SayfaSayisi;
-            guncellenecekKitap.Yazar = guncelKitap.Yazar;
-            _context.SaveChanges();
-
-            return Ok("Başarıyla Güncellendi");
-        }
-
-        
-        
     }
 }

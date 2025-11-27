@@ -9,7 +9,7 @@ namespace Simple.Data
         {
 
         }
-        public DbSet<Urun> Urunler { get; set; }
-        public DbSet<Kitaplar> kitaplar { get; set; }
+        
+        public DbSet<Kitaplar> Kitaplar { get; set; }
     }
 }
