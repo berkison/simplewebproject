@@ -24,6 +24,9 @@ namespace Simple.Controllers
         [HttpGet]
         public async Task<IActionResult> KitaplariGetir() // Düzeltme: Task<IActionResult>
         {
+
+            //throw new Exception("DENEME");
+
             // Servisten gelen verinin tipi: List<Kitaplar>
             var gercekKitaplar = await _service.TumKitaplariGetir();
 

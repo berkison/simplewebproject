@@ -1,4 +1,3 @@
-// ... diðer using'ler
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,10 +7,7 @@ using Simple.Services;
 using Simple.Mapping;
 using Simple.Validations;
 using FluentValidation.AspNetCore;
-
-
-
-
+using Simple.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,16 +15,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 
-// HATA ALDIÐIN SATIR ARTIK ÇALIÞACAK:
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Benim API", Version = "v1" });
 });
+
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<SimpleContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 
 builder.Services.AddCors(options =>
 {
@@ -37,7 +32,6 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
-
 
 builder.Services.AddScoped<IKitapService, KitapService>();
 builder.Services.AddAuthorization();
@@ -56,13 +50,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(); // Arayüzü açan kod budur
 }
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
-app.UseHttpsRedirection();
-// ALTINA BUNU EKLE:
+
+
+
 app.UseCors("HerkesGelsin"); //HERKESE AÇIK ***********************************************************************************
 // ...
-app.UseAuthorization();
 
+
+app.UseAuthorization();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
