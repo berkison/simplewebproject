@@ -22,10 +22,10 @@ namespace Simple.Controllers
 
         // --- LİSTELEME (GET) ---
         [HttpGet]
-        public IActionResult KitaplariGetir()
+        public async Task<IActionResult> KitaplariGetir() // Düzeltme: Task<IActionResult>
         {
             // Servisten gelen verinin tipi: List<Kitaplar>
-            var gercekKitaplar = _service.TumKitaplariGetir();
+            var gercekKitaplar = await _service.TumKitaplariGetir();
 
             // AutoMapper: List<Kitaplar> -> List<KitapListelemeDto>
             var dtoListe = _mapper.Map<List<KitapListelemeDTO>>(gercekKitaplar);
@@ -35,35 +35,35 @@ namespace Simple.Controllers
 
         // --- EKLEME (POST) ---
         [HttpPost]
-        public IActionResult KitapEkle(KitapEklemeDTO gelenVeri)
+        public async Task<IActionResult> KitapEkle(KitapEklemeDTO gelenVeri) // Düzeltme: async Task
         {
             // AutoMapper: KitapEklemeDto -> Kitaplar
             var yeniKitap = _mapper.Map<Kitaplar>(gelenVeri);
 
-            _service.KitapEkle(yeniKitap);
+            await _service.KitapEkle(yeniKitap); // Düzeltme: await eklendi
 
             return Ok("Kitap başarıyla eklendi.");
         }
 
         // --- GÜNCELLEME (PUT) ---
         [HttpPut("{id}")]
-        public IActionResult KitapGuncelle(int id, KitapEklemeDTO guncellenecekVeri)
+        public async Task<IActionResult> KitapGuncelle(int id, KitapEklemeDTO guncellenecekVeri) // Düzeltme: async Task
         {
-            var mevcutKitap = _service.IdIleGetir(id);
+            var mevcutKitap = await _service.IdIleGetir(id); // Düzeltme: await eklendi
             if (mevcutKitap == null) return NotFound("Kitap bulunamadı!");
 
             // AutoMapper: DTO verilerini mevcut 'Kitaplar' nesnesinin üzerine yazar
             _mapper.Map(guncellenecekVeri, mevcutKitap);
 
-            _service.KitapGuncelle(id, mevcutKitap);
+            await _service.KitapGuncelle(id, mevcutKitap); // Düzeltme: await eklendi
             return Ok("Kitap güncellendi.");
         }
 
         // --- SİLME (DELETE) ---
         [HttpDelete("{id}")]
-        public IActionResult KitapSil(int id)
+        public async Task<IActionResult> KitapSil(int id) // Düzeltme: async Task
         {
-            var sonuc = _service.KitapSil(id);
+            var sonuc = await _service.KitapSil(id); // Düzeltme: await eklendi
             if (!sonuc) return NotFound("Silinecek kitap yok.");
 
             return Ok("Kitap silindi.");

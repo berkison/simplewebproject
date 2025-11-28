@@ -1,53 +1,53 @@
 ﻿using Simple.Data;
 using Simple.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Simple.Services
 {
-    public class KitapService:IKitapService // IKitapService'ten miras aldık
+    public class KitapService : IKitapService // IKitapService'ten miras aldık
     {
         private readonly SimpleContext _context;
         public KitapService(SimpleContext context)
 
         {
-
             _context = context;
         }
 
-        public List<Kitaplar> TumKitaplariGetir()
+        public async Task<List<Kitaplar>> TumKitaplariGetir()
         {
-            return _context.Kitaplar.ToList();
+            return await _context.Kitaplar.ToListAsync();
         }
 
-        public Kitaplar IdIleGetir(int id)
+        public async Task<Kitaplar> IdIleGetir(int id)
         {
-            return _context.Kitaplar.Find(id);
+            return await _context.Kitaplar.FindAsync(id);
         }
-        public void KitapEkle(Kitaplar yeniKitap)
+        public async Task KitapEkle(Kitaplar yeniKitap)
         {
-            _context.Kitaplar.Add(yeniKitap);
-            _context.SaveChanges();
+            await _context.Kitaplar.AddAsync(yeniKitap);
+            await _context.SaveChangesAsync();
         }
 
-        public void KitapGuncelle(int id, Kitaplar guncelKitap)
+        public async Task KitapGuncelle(int id, Kitaplar guncelKitap)
         {
-            var kitap = _context.Kitaplar.Find(id);
+            var kitap = await _context.Kitaplar.FindAsync(id);
             if (kitap != null)
             {
                 kitap.Ad = guncelKitap.Ad;
                 kitap.Yazar = guncelKitap.Yazar;
                 kitap.SayfaSayisi = guncelKitap.SayfaSayisi;
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
 
 
-        public bool KitapSil(int id)
+        public async Task<bool> KitapSil(int id)
         {
-            var kitap = _context.Kitaplar.Find(id);
+            var kitap = await _context.Kitaplar.FindAsync(id);
             if(kitap != null)
             {
-                _context.Kitaplar.Remove(kitap);
-                _context.SaveChanges();
+                 _context.Kitaplar.Remove(kitap);
+                await _context.SaveChangesAsync();
                 return true;
             }
             return false;

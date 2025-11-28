@@ -1,19 +1,18 @@
-﻿// modelleri almalı gerekli usingler eklenecek...
-
+﻿//ASENKRON HALE GETİRİLECEK 28.11.2025
 using Simple.Models;
 
 namespace Simple.Services
 {
     public interface IKitapService
     {
-        List<Kitaplar> TumKitaplariGetir();
-        Kitaplar IdIleGetir(int id);
+        Task<List<Kitaplar>> TumKitaplariGetir();
+        Task<Kitaplar> IdIleGetir(int id);
 
-        void KitapEkle(Kitaplar yeniKitap);
+        Task KitapEkle(Kitaplar yeniKitap);
 
-        void KitapGuncelle(int id, Kitaplar guncelKitap);
+        Task KitapGuncelle(int id, Kitaplar guncelKitap);
 
-        bool KitapSil(int id);
+        Task<bool> KitapSil(int id);
 
 
     }
