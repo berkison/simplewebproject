@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Simple.DTOs;
 using Simple.Models;
-using Simple.Services; // Service klasörünü ekle
+using Simple.Services;
 
 namespace Simple.Controllers
 {
@@ -8,39 +10,56 @@ namespace Simple.Controllers
     [ApiController]
     public class KitaplarController : ControllerBase
     {
-        // ARTIK CONTEXT YOK, SERVICE VAR
         private readonly IKitapService _service;
+        private readonly IMapper _mapper;
 
-        public KitaplarController(IKitapService service)
+        // Tek ve doğru yapıcı metot (Constructor)
+        public KitaplarController(IKitapService service, IMapper mapper)
         {
             _service = service;
+            _mapper = mapper;
         }
 
+        // --- LİSTELEME (GET) ---
         [HttpGet]
         public IActionResult KitaplariGetir()
         {
-            var kitaplar = _service.TumKitaplariGetir();
-            return Ok(kitaplar);
+            // Servisten gelen verinin tipi: List<Kitaplar>
+            var gercekKitaplar = _service.TumKitaplariGetir();
+
+            // AutoMapper: List<Kitaplar> -> List<KitapListelemeDto>
+            var dtoListe = _mapper.Map<List<KitapListelemeDTO>>(gercekKitaplar);
+
+            return Ok(dtoListe);
         }
 
+        // --- EKLEME (POST) ---
         [HttpPost]
-        public IActionResult KitapEkle(Kitaplar yeniKitap)
+        public IActionResult KitapEkle(KitapEklemeDTO gelenVeri)
         {
+            // AutoMapper: KitapEklemeDto -> Kitaplar
+            var yeniKitap = _mapper.Map<Kitaplar>(gelenVeri);
+
             _service.KitapEkle(yeniKitap);
+
             return Ok("Kitap başarıyla eklendi.");
         }
 
+        // --- GÜNCELLEME (PUT) ---
         [HttpPut("{id}")]
-        public IActionResult KitapGuncelle(int id, Kitaplar guncelKitap)
+        public IActionResult KitapGuncelle(int id, KitapEklemeDTO guncellenecekVeri)
         {
-            // Kontrolü servise bırakabilirsin veya burada yapabilirsin
-            var kitap = _service.IdIleGetir(id);
-            if (kitap == null) return NotFound("Kitap bulunamadı");
+            var mevcutKitap = _service.IdIleGetir(id);
+            if (mevcutKitap == null) return NotFound("Kitap bulunamadı!");
 
-            _service.KitapGuncelle(id, guncelKitap);
+            // AutoMapper: DTO verilerini mevcut 'Kitaplar' nesnesinin üzerine yazar
+            _mapper.Map(guncellenecekVeri, mevcutKitap);
+
+            _service.KitapGuncelle(id, mevcutKitap);
             return Ok("Kitap güncellendi.");
         }
 
+        // --- SİLME (DELETE) ---
         [HttpDelete("{id}")]
         public IActionResult KitapSil(int id)
         {

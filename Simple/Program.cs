@@ -1,9 +1,13 @@
 // ... diðer using'ler
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi;
 using Simple.Data;
-using Microsoft.AspNetCore.Identity;
 using Simple.Services;
+using Simple.Mapping;
+using Simple.Validations;
+using FluentValidation.AspNetCore;
 
 
 
@@ -36,12 +40,15 @@ builder.Services.AddCors(options =>
 
 
 builder.Services.AddScoped<IKitapService, KitapService>();
-
 builder.Services.AddAuthorization();
 
-var app = builder.Build();
+builder.Services.AddAutoMapper(typeof(MapProfile)); // BUÝLD ETMEDEN ÖNCE SERVÝSLERÝ EKLEMEM LAZIM AÞAÐIYA EKLEYÝNCE HATALAR ALIRIM
+//*********************************************************************************************************************************
+//*********************************************************************************************************************************
+builder.Services.AddControllers()
+    .AddFluentValidation(x => x.RegisterValidatorsFromAssemblyContaining<KitapValidator>());
 
-// ... Identity map iþlemlerin kalsýn ...
+var app = builder.Build();
 
 // SWAGGER'I AKTÝF ETMEK ÝÇÝN BUNLARI EKLE:
 if (app.Environment.IsDevelopment())
@@ -52,7 +59,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 // ALTINA BUNU EKLE:
-app.UseCors("HerkesGelsin"); //HERKESE AÇIK
+app.UseCors("HerkesGelsin"); //HERKESE AÇIK ***********************************************************************************
 // ...
 app.UseAuthorization();
 
