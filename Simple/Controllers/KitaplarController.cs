@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Simple.DTOs;
 using Simple.Models;
@@ -8,6 +9,7 @@ namespace Simple.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class KitaplarController : ControllerBase
     {
         private readonly IKitapService _service;
@@ -37,6 +39,7 @@ namespace Simple.Controllers
         }
 
         // --- EKLEME (POST) ---
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> KitapEkle(KitapEklemeDTO gelenVeri) // Düzeltme: async Task
         {
@@ -49,6 +52,7 @@ namespace Simple.Controllers
         }
 
         // --- GÜNCELLEME (PUT) ---
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> KitapGuncelle(int id, KitapEklemeDTO guncellenecekVeri) // Düzeltme: async Task
         {
@@ -63,6 +67,7 @@ namespace Simple.Controllers
         }
 
         // --- SİLME (DELETE) ---
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> KitapSil(int id) // Düzeltme: async Task
         {

@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore; // DbContext sınıfı buradan gelir
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore; // DbContext sınıfı buradan gelir
 using Simple.Models;       // Entity (Urun, Kategori vb.) sınıfların buradadır
+
+
 
 namespace Simple.Data
 {
-    public class SimpleContext : DbContext
+    public class SimpleContext : IdentityDbContext
     {
         public SimpleContext(DbContextOptions<SimpleContext> options) : base(options)
         {
